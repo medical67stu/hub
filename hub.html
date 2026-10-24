@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Year 1 Medicine Hub</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Cairo:wght@500;600&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+:root {
+  --bg: #F3F5F9; --surface: #FFFFFF; --ink: #152033; --muted: #5A6779; --line: #DCE2EA; --danger: #B3261E;
+  --dc: #B4432F; --dt: #F8E9E5;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --arabic: "Cairo", "Segoe UI", Tahoma, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { color-scheme: light; }
+body { background: var(--bg); color: var(--ink); font: 400 18px/1.55 var(--body); margin: 0; }
+.wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header.top { position: sticky; top: 0; z-index: 9; background: #fff; border-bottom: 3px solid var(--dc); padding-top: env(safe-area-inset-top, 0px); }
+header.top .wrap { padding-block: 14px 0; }
+.eyebrow { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+h1 { margin: 2px 0 10px; font: 800 28px/1.1 var(--display); }
+.tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px; font: 700 17px/1 var(--body); color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 999px; padding: 12px 18px; cursor: pointer; }
+.tab:hover { border-color: var(--tc); }
+.tab i { width: 10px; height: 10px; border-radius: 50%; background: var(--tc); display: block; }
+.tab[aria-selected="true"] { background: var(--tc); border-color: var(--tc); color: #fff; }
+.tab[aria-selected="true"] i { background: #fff; }
+button { font-family: inherit; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--dc); outline-offset: 2px; }
+main { padding-block: 20px 64px; }
+.note { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0 0 18px; font-size: 15px; color: var(--muted); }
+.note.err { background: #FFF4E5; border-color: #F0C98A; color: #5C3B00; }
+.note p { margin: 0; }
+.note .ar { font-family: var(--arabic); font-size: 15px; margin-top: 4px; }
+.hero { background: var(--dc); color: #fff; border-radius: 18px; padding: 22px 20px 20px; }
+.hero .eyebrow { color: #fff; opacity: .85; }
+.hero h2 { margin: 2px 0 16px; font: 800 36px/1.05 var(--display); color: #fff; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+.stat { background: rgba(255,255,255,.16); border-radius: 12px; padding: 10px 12px; }
+.stat b { display: block; font: 800 26px/1 var(--display); font-variant-numeric: tabular-nums; }
+.stat span { display: block; margin-top: 4px; font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.seg { display: flex; gap: 8px; overflow-x: auto; margin: 18px 0 14px; padding-bottom: 2px; scrollbar-width: none; }
+.seg::-webkit-scrollbar { display: none; }
+.seg button { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px; font: 700 16px/1 var(--body); color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 14px; cursor: pointer; }
+.seg button:hover { border-color: var(--dc); }
+.seg button[aria-selected="true"] { background: var(--dt); border-color: var(--dc); color: var(--dc); }
+.seg .n { font-size: 13px; font-weight: 700; background: var(--bg); color: var(--muted); border-radius: 999px; padding: 3px 8px; font-variant-numeric: tabular-nums; }
+.seg button[aria-selected="true"] .n { background: var(--dc); color: #fff; }
+.toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.search { flex: 1 1 180px; min-width: 0; font: 400 18px/1.3 var(--body); color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.addbtn { flex: 0 0 auto; font: 700 17px/1 var(--body); color: #fff; background: var(--dc); border: 0; border-radius: 10px; padding: 14px 18px; cursor: pointer; }
+.addbtn:hover { filter: brightness(1.08); }
+.addbtn:active { transform: translateY(1px); }
+.list { display: flex; flex-direction: column; gap: 10px; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; cursor: pointer; color: var(--ink); }
+.row:hover { border-color: var(--dc); background: var(--dt); }
+.row .name { min-width: 0; overflow-wrap: anywhere; font: 700 20px/1.25 var(--body); }
+.row .count { display: block; margin-top: 3px; font: 400 15px/1.3 var(--body); color: var(--muted); }
+.row .go { flex: 0 0 auto; color: var(--dc); font-weight: 800; font-size: 22px; }
+.back { background: none; border: 0; padding: 8px 0; margin: 0 0 10px; cursor: pointer; font: 700 16px/1 var(--body); color: var(--dc); }
+.lesson-head { background: var(--dc); color: #fff; border-radius: 18px; padding: 20px; margin-bottom: 22px; }
+.lesson-head .eyebrow { color: #fff; opacity: .85; }
+.lesson-head h2 { margin: 4px 0 0; font: 800 32px/1.1 var(--display); overflow-wrap: anywhere; }
+.lesson-head .by { margin: 8px 0 0; font-size: 14px; opacity: .92; }
+.link-btn { background: none; border: 0; padding: 6px 0; font: 700 14px/1 var(--body); color: var(--muted); cursor: pointer; }
+.link-btn.warn { color: var(--danger); }
+.lesson-head .link-btn { color: #fff; opacity: .9; text-decoration: underline; }
+.group { margin-bottom: 28px; }
+.ghead { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.ghead h3 { margin: 0; font: 800 22px/1.1 var(--display); display: flex; align-items: center; gap: 10px; }
+.ghead h3 svg { color: var(--dc); }
+.ghead .addbtn { padding: 11px 14px; font-size: 15px; }
+.entry { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; margin-bottom: 10px; overflow: hidden; }
+.entry:hover { border-color: var(--dc); }
+a.item { display: flex; align-items: center; gap: 14px; padding: 14px 16px 8px; color: var(--ink); text-decoration: none; }
+.badge { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 12px; background: var(--dt); color: var(--dc); display: grid; place-items: center; }
+.txt { flex: 1 1 auto; min-width: 0; }
+.txt .t { display: block; font-weight: 700; font-size: 18px; line-height: 1.3; overflow-wrap: anywhere; }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 5px; }
+.tag { font-size: 12px; font-weight: 700; letter-spacing: .03em; color: var(--muted); background: var(--bg); border-radius: 999px; padding: 3px 9px; }
+.act { flex: 0 0 auto; font-size: 15px; font-weight: 700; color: #fff; background: var(--dc); border-radius: 9px; padding: 10px 14px; white-space: nowrap; }
+.meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 16px 10px 76px; font-size: 14px; color: var(--muted); }
+.empty { margin: 0; padding: 22px 16px; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--muted); font-size: 16px; text-align: center; background: var(--surface); }
+.panel { margin-bottom: 14px; }
+.blocked { margin: 0 0 12px; padding: 12px 14px; border-radius: 10px; background: #FFF4E5; border: 1px solid #F0C98A; color: #5C3B00; font-size: 16px; }
+.form { background: var(--surface); border: 2px solid var(--dc); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.form label { display: flex; flex-direction: column; gap: 5px; font-size: 14px; font-weight: 700; color: var(--muted); }
+.form input[type="text"], .form input[type="url"], .form select { font: 400 18px/1.3 var(--body); color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; padding: 12px; width: 100%; min-width: 0; }
+.form .hint { font-size: 14px; color: var(--muted); margin: 0; }
+.form .status { margin: 0; font-size: 15px; color: var(--danger); }
+.form .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { font: 700 17px/1 var(--body); border-radius: 10px; padding: 13px 20px; border: 1.5px solid var(--dc); cursor: pointer; background: var(--dc); color: #fff; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn[disabled] { opacity: .6; cursor: default; }
+@media (max-width: 480px) {
+  h1 { font-size: 24px; } .hero h2 { font-size: 30px; }
+  a.item { flex-wrap: wrap; } .act { width: 100%; text-align: center; margin-top: 4px; } .meta { padding-left: 16px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .view { animation: rise .25s ease-out; }
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">Faculty of Medicine, Assiut · Year 1</p>
+    <h1>Year 1 Medicine Hub</h1>
+    <div class="tabs" id="tabs" role="tablist" aria-label="Departments"></div>
+  </div>
+</header>
+<main class="wrap">
+  <div id="note"></div>
+  <div id="view" class="view"></div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, doc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ============ PASTE YOUR FIREBASE SETTINGS HERE (see SETUP.md, step 5) ============ */
+const firebaseConfig = {
+  apiKey: "AIzaSyAyQPBRlpJsyzZrGgYL_D5lWgQBuDW4jU4",
+  authDomain: "med-67-data.firebaseapp.com",
+  projectId: "med-67-data",
+  storageBucket: "med-67-data.firebasestorage.app",
+  messagingSenderId: "632896920325",
+  appId: "1:632896920325:web:3255a6b7886d52bb27f56c"
+};
+/* ================================================================================= */
+
+const DEPTS = [
+  { id: "anatomy", name: "Anatomy", color: "#B4432F", tint: "#F8E9E5" },
+  { id: "histology", name: "Histology", color: "#8A3A87", tint: "#F3E7F2" },
+  { id: "physiology", name: "Physiology", color: "#12766F", tint: "#E1F2F0" },
+  { id: "biochemistry", name: "Biochemistry", color: "#A66A0A", tint: "#F9EFD9" }
+];
+const KINDS = {
+  files: { key: "files", title: "Files & PDFs", add: "+ Add file", hint: "Upload the PDF to Telegram or Google Drive, then paste its link here.", empty: "No files or PDFs yet. Tap + Add file to put the first one here." },
+  videos: { key: "videos", title: "Videos", add: "+ Add video", hint: "Paste the Telegram link of the video.", empty: "No videos yet. Tap + Add video and paste a Telegram link." },
+  practical: { key: "practical", title: "Practical", add: "+ Add practical", hint: "Paste a link to the practical material (Telegram, Drive or any website).", empty: "No practical material yet. Tap + Add practical to start." }
+};
+const KORDER = ["files", "videos", "practical"];
+const TABS = ["lessons", "files", "videos", "practical"];
+
+const tabsEl = document.getElementById("tabs");
+const viewEl = document.getElementById("view");
+const noteEl = document.getElementById("note");
+
+const setupMissing = /PASTE_/.test(firebaseConfig.apiKey);
+let db = null, myId = null, canWrite = false, ready = false, loadError = "";
+let lessons = [], items = [];
+const state = { dept: DEPTS[0], tab: "lessons", lessonId: null };
+let ui = {};
+
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function plural(n, w) { return n + " " + w + (n === 1 ? "" : "s"); }
+const byAtAsc = (a, b) => (a.at || 0) - (b.at || 0);
+const byAtDesc = (a, b) => (b.at || 0) - (a.at || 0);
+function safeUrl(u) {
+  u = String(u || "").trim();
+  if (/^t\.me\//i.test(u)) u = "https://" + u;
+  return /^https?:\/\//i.test(u) ? u : "";
+}
+const lessonById = (id) => lessons.find((l) => l.id === id) || null;
+const mine = (rec) => !!(rec.by && myId && rec.by === myId);
+function getName() { try { return localStorage.getItem("hub_name") || ""; } catch (e) { return ""; } }
+function setName(v) { try { localStorage.setItem("hub_name", v); } catch (e) {} }
+function setDeptVars() { const r = document.documentElement.style; r.setProperty("--dc", state.dept.color); r.setProperty("--dt", state.dept.tint); }
+
+function icon(kind, size) {
+  const NS = "http://www.w3.org/2000/svg";
+  const s = document.createElementNS(NS, "svg");
+  s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("width", size || 24); s.setAttribute("height", size || 24);
+  s.setAttribute("fill", "none"); s.setAttribute("stroke", "currentColor"); s.setAttribute("stroke-width", "1.8");
+  s.setAttribute("stroke-linecap", "round"); s.setAttribute("stroke-linejoin", "round"); s.setAttribute("aria-hidden", "true");
+  const paths = {
+    files: ["M7 3h7l5 5v13H7z", "M14 3v5h5", "M10 13h6M10 17h6"],
+    videos: ["M3 6h13a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H3z", "M18 10l4-2v8l-4-2", "M8 10l4 2-4 2z"],
+    practical: ["M9 3h6", "M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3", "M7.5 15h9"]
+  };
+  (paths[kind] || paths.files).forEach((d) => { const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); s.appendChild(p); });
+  return s;
+}
+function byLine(rec) { return el("span", null, "Added by " + (rec.byName || "a classmate")); }
+function armDelete(btn, label, action) {
+  let armed = false, t = null;
+  const reset = () => { armed = false; btn.disabled = false; btn.textContent = label; btn.classList.remove("warn"); };
+  btn.addEventListener("click", () => {
+    if (!armed) { armed = true; btn.textContent = "Tap again to delete"; btn.classList.add("warn"); t = setTimeout(reset, 3500); return; }
+    clearTimeout(t); btn.disabled = true; action().then(() => {}, reset);
+  });
+}
+function errText(e) {
+  const c = e && e.code;
+  if (c === "permission-denied") return "Not allowed. Check the Firestore rules in the setup guide.";
+  if (c === "resource-exhausted") return "The daily free limit was reached. Try again tomorrow.";
+  return "Could not save. Check your connection and try again.";
+}
+function blockedMessage() {
+  if (setupMissing) return "The site is not connected to its database yet. The owner needs to finish SETUP.md.";
+  if (!ready) return "Still connecting. Try again in a moment.";
+  return "Could not connect to the database. Reload the page and try again.";
+}
+
+function makeForm(cfg) {
+  const btn = el("button", "addbtn", cfg.openLabel); btn.type = "button"; btn.setAttribute("aria-expanded", "false");
+  const panel = el("div", "panel"); panel.hidden = true;
+  const blocked = el("p", "blocked"); blocked.hidden = true; blocked.setAttribute("role", "status");
+  const form = el("form", "form"); form.hidden = true; form.noValidate = true;
+
+  const f1 = el("label", null, cfg.titleLabel);
+  const title = el("input"); title.type = "text"; title.maxLength = 120; title.autocomplete = "off";
+  f1.appendChild(title); form.appendChild(f1);
+
+  let url = null, sel = null;
+  if (cfg.withUrl) {
+    const f2 = el("label", null, "Link");
+    url = el("input"); url.type = "url"; url.placeholder = "https://t.me/..."; url.autocomplete = "off"; url.inputMode = "url";
+    f2.appendChild(url); form.appendChild(f2);
+    form.appendChild(el("p", "hint", cfg.hint));
+  }
+  if (cfg.lessonSelect) {
+    const f3 = el("label", null, "Lesson");
+    sel = el("select"); f3.appendChild(sel); form.appendChild(f3);
+  }
+  const f4 = el("label", null, "Your name (optional)");
+  const who = el("input"); who.type = "text"; who.maxLength = 40; who.autocomplete = "name"; who.value = getName();
+  f4.appendChild(who); form.appendChild(f4);
+
+  const status = el("p", "status"); status.setAttribute("role", "status"); form.appendChild(status);
+  const btns = el("div", "btns");
+  const save = el("button", "btn", "Save"); save.type = "submit";
+  const cancel = el("button", "btn ghost", "Cancel"); cancel.type = "button";
+  btns.appendChild(save); btns.appendChild(cancel); form.appendChild(btns);
+  panel.appendChild(blocked); panel.appendChild(form);
+
+  const setOpen = (o) => { panel.hidden = !o; btn.setAttribute("aria-expanded", o ? "true" : "false"); };
+  btn.addEventListener("click", () => {
+    if (!panel.hidden) { setOpen(false); return; }
+    setOpen(true);
+    if (!canWrite) { blocked.textContent = blockedMessage(); blocked.hidden = false; form.hidden = true; return; }
+    blocked.hidden = true; form.hidden = false; who.value = getName(); title.focus();
+  });
+  cancel.addEventListener("click", () => { status.textContent = ""; setOpen(false); });
+
+  function setLessons(list) {
+    if (!sel) return;
+    const cur = sel.value;
+    sel.textContent = "";
+    const g = el("option", null, "General (no lesson)"); g.value = ""; sel.appendChild(g);
+    list.forEach((l) => { const o = el("option", null, l.name); o.value = l.id; sel.appendChild(o); });
+    sel.value = cur;
+    if (sel.value !== cur) sel.value = "";
+  }
+
+  form.addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    const tv = title.value.trim();
+    if (!tv) { status.textContent = "Add a name first."; return; }
+    const payload = { title: tv, url: "", lessonId: sel ? sel.value : "", byName: who.value.trim().slice(0, 40) };
+    if (cfg.withUrl) {
+      const raw = url.value.trim();
+      if (!raw) { status.textContent = "Paste a link."; return; }
+      payload.url = safeUrl(raw);
+      if (!payload.url) { status.textContent = "The link must start with https:// or t.me/."; return; }
+      if (payload.url.length > 1000) { status.textContent = "That link is too long."; return; }
+    }
+    status.textContent = "";
+    setName(payload.byName);
+    save.disabled = true; save.textContent = "Saving...";
+    cfg.onSave(payload).then(() => {
+      title.value = ""; if (url) url.value = "";
+      setOpen(false);
+    }, (e) => { status.textContent = errText(e); }).then(() => { save.disabled = false; save.textContent = "Save"; });
+  });
+  setLessons([]);
+  return { btn, panel, setLessons };
+}
+
+function actLabel(it) {
+  const u = it.url || "";
+  if (it.kind === "videos") return /^https?:\/\/(www\.)?t\.me\//i.test(u) ? "Watch on Telegram" : "Watch video";
+  if (it.kind === "files") return /\.pdf(\?|#|$)/i.test(u) ? "Open PDF" : "Open file";
+  return "Open";
+}
+function entry(it, showLesson) {
+  const e = el("div", "entry");
+  const href = safeUrl(it.url);
+  const a = el("a", "item");
+  if (href) { a.href = href; a.target = "_blank"; a.rel = "noopener noreferrer"; }
+  const badge = el("span", "badge"); badge.appendChild(icon(it.kind, 24)); a.appendChild(badge);
+  const txt = el("span", "txt"); txt.appendChild(el("span", "t", it.title));
+  const tags = el("span", "tags");
+  if (showLesson) { const l = it.lessonId ? lessonById(it.lessonId) : null; tags.appendChild(el("span", "tag", l ? l.name : "General")); }
+  if (/^https?:\/\/(www\.)?t\.me\//i.test(it.url || "")) tags.appendChild(el("span", "tag", "Telegram"));
+  if (/\.pdf(\?|#|$)/i.test(it.url || "")) tags.appendChild(el("span", "tag", "PDF"));
+  if (tags.childNodes.length) txt.appendChild(tags);
+  a.appendChild(txt);
+  a.appendChild(el("span", "act", actLabel(it)));
+  e.appendChild(a);
+  const meta = el("div", "meta");
+  meta.appendChild(byLine(it));
+  if (mine(it)) {
+    const d = el("button", "link-btn", "Delete"); d.type = "button";
+    armDelete(d, "Delete", () => deleteDoc(doc(db, "items", it.id)));
+    meta.appendChild(d);
+  }
+  e.appendChild(meta);
+  return e;
+}
+
+function addItem(p, kind, dept, lessonId) {
+  return addDoc(collection(db, "items"), { lessonId: lessonId || "", dept, kind, title: p.title, url: p.url, by: myId, byName: p.byName, at: Date.now() });
+}
+
+function buildDeptView() {
+  viewEl.textContent = "";
+  ui = { forms: [], seg: {}, stat: {} };
+  const dept = state.dept, tab = state.tab;
+  const hero = el("section", "hero");
+  hero.appendChild(el("p", "eyebrow", "Department"));
+  hero.appendChild(el("h2", null, dept.name));
+  const stats = el("div", "stats");
+  [["lessons", "Lessons"], ["files", "Files"], ["videos", "Videos"], ["practical", "Practical"]].forEach((s) => {
+    const box = el("div", "stat"); const b = el("b", null, "0"); box.appendChild(b); box.appendChild(el("span", null, s[1]));
+    ui.stat[s[0]] = b; stats.appendChild(box);
+  });
+  hero.appendChild(stats);
+  viewEl.appendChild(hero);
+
+  const seg = el("div", "seg"); seg.setAttribute("role", "tablist");
+  TABS.forEach((t) => {
+    const b = el("button"); b.type = "button"; b.setAttribute("role", "tab"); b.setAttribute("aria-selected", t === tab ? "true" : "false");
+    b.appendChild(el("span", null, t === "lessons" ? "Lessons" : KINDS[t].title));
+    const n = el("span", "n", "0"); b.appendChild(n); ui.seg[t] = n;
+    b.addEventListener("click", () => { state.tab = t; render(); });
+    seg.appendChild(b);
+  });
+  viewEl.appendChild(seg);
+
+  const bar = el("div", "toolbar");
+  ui.search = el("input", "search"); ui.search.type = "search"; ui.search.placeholder = "Search in " + dept.name; ui.search.setAttribute("aria-label", "Search");
+  ui.search.addEventListener("input", refreshData);
+  bar.appendChild(ui.search);
+  let form;
+  if (tab === "lessons") {
+    form = makeForm({ openLabel: "+ Add lesson", titleLabel: "Lesson name", withUrl: false,
+      onSave: (p) => addDoc(collection(db, "lessons"), { dept: dept.id, name: p.title, by: myId, byName: p.byName, at: Date.now() }) });
+  } else {
+    const k = KINDS[tab];
+    form = makeForm({ openLabel: k.add, titleLabel: "Name", withUrl: true, hint: k.hint, lessonSelect: true,
+      onSave: (p) => addItem(p, tab, dept.id, p.lessonId) });
+  }
+  ui.forms.push(form);
+  bar.appendChild(form.btn);
+  viewEl.appendChild(bar);
+  viewEl.appendChild(form.panel);
+  ui.content = el("div", "list");
+  viewEl.appendChild(ui.content);
+}
+
+function buildLessonView() {
+  viewEl.textContent = "";
+  ui = { forms: [], groups: {} };
+  const back = el("button", "back", "← Back to " + state.dept.name); back.type = "button";
+  back.addEventListener("click", () => { state.lessonId = null; render(); });
+  viewEl.appendChild(back);
+  ui.head = el("section", "lesson-head");
+  ui.head.appendChild(el("p", "eyebrow", state.dept.name + " lesson"));
+  ui.headTitle = el("h2"); ui.headBy = el("p", "by"); ui.headAct = el("div");
+  ui.head.appendChild(ui.headTitle); ui.head.appendChild(ui.headBy); ui.head.appendChild(ui.headAct);
+  viewEl.appendChild(ui.head);
+  const lid = state.lessonId, did = state.dept.id;
+  KORDER.forEach((key) => {
+    const k = KINDS[key];
+    const g = el("section", "group");
+    const head = el("div", "ghead");
+    const h3 = el("h3"); h3.appendChild(icon(key, 22)); h3.appendChild(el("span", null, k.title));
+    head.appendChild(h3);
+    const form = makeForm({ openLabel: k.add, titleLabel: "Name", withUrl: true, hint: k.hint, onSave: (p) => addItem(p, key, did, lid) });
+    ui.forms.push(form);
+    head.appendChild(form.btn);
+    g.appendChild(head); g.appendChild(form.panel);
+    const box = el("div"); g.appendChild(box); ui.groups[key] = box;
+    viewEl.appendChild(g);
+  });
+}
+
+function refreshData() {
+  if (!ui.forms) return;
+  const did = state.dept.id;
+  const ls = lessons.filter((l) => l.dept === did).sort(byAtAsc);
+  ui.forms.forEach((f) => f.setLessons(ls));
+
+  if (!state.lessonId) {
+    const di = items.filter((i) => i.dept === did);
+    const cnt = { files: 0, videos: 0, practical: 0 };
+    di.forEach((i) => { if (cnt[i.kind] != null) cnt[i.kind]++; });
+    ui.stat.lessons.textContent = ls.length; ui.stat.files.textContent = cnt.files; ui.stat.videos.textContent = cnt.videos; ui.stat.practical.textContent = cnt.practical;
+    ui.seg.lessons.textContent = ls.length; ui.seg.files.textContent = cnt.files; ui.seg.videos.textContent = cnt.videos; ui.seg.practical.textContent = cnt.practical;
+    const q = ui.search.value.trim().toLowerCase();
+    ui.content.textContent = "";
+    if (state.tab === "lessons") {
+      const shown = ls.filter((l) => !q || l.name.toLowerCase().includes(q));
+      if (!shown.length) { ui.content.appendChild(el("p", "empty", q ? "No lesson matches that search." : "No lessons yet. Tap + Add lesson to create the first one.")); return; }
+      shown.forEach((l) => {
+        const mi = di.filter((i) => i.lessonId === l.id);
+        const c = { files: 0, videos: 0, practical: 0 };
+        mi.forEach((i) => { if (c[i.kind] != null) c[i.kind]++; });
+        const b = el("button", "row"); b.type = "button";
+        const left = el("span"); left.appendChild(el("span", "name", l.name));
+        left.appendChild(el("span", "count", mi.length ? (c.files + " files · " + c.videos + " videos · " + c.practical + " practical") : "Nothing added yet"));
+        b.appendChild(left); b.appendChild(el("span", "go", "›"));
+        b.addEventListener("click", () => { state.lessonId = l.id; render(); window.scrollTo(0, 0); });
+        ui.content.appendChild(b);
+      });
+    } else {
+      const list = di.filter((i) => {
+        if (i.kind !== state.tab) return false;
+        if (!q) return true;
+        const l = i.lessonId ? lessonById(i.lessonId) : null;
+        return (i.title || "").toLowerCase().includes(q) || (l && l.name.toLowerCase().includes(q));
+      }).sort(byAtDesc);
+      if (!list.length) { ui.content.appendChild(el("p", "empty", q ? "Nothing matches that search." : KINDS[state.tab].empty)); return; }
+      list.forEach((it) => ui.content.appendChild(entry(it, true)));
+    }
+    return;
+  }
+
+  const lesson = lessonById(state.lessonId);
+  if (!lesson) { if (ready && lessons.length) { state.lessonId = null; render(); } return; }
+  ui.headTitle.textContent = lesson.name;
+  ui.headBy.textContent = ""; ui.headBy.appendChild(byLine(lesson));
+  ui.headAct.textContent = "";
+  if (mine(lesson)) {
+    const del = el("button", "link-btn", "Delete lesson"); del.type = "button";
+    armDelete(del, "Delete lesson", () => {
+      let chain = Promise.resolve();
+      items.filter((i) => i.lessonId === lesson.id && mine(i)).forEach((it) => { chain = chain.then(() => deleteDoc(doc(db, "items", it.id))); });
+      return chain.then(() => deleteDoc(doc(db, "lessons", lesson.id))).then(() => { state.lessonId = null; render(); });
+    });
+    ui.headAct.appendChild(del);
+  }
+  const mi = items.filter((i) => i.lessonId === lesson.id).sort(byAtDesc);
+  KORDER.forEach((key) => {
+    const box = ui.groups[key]; box.textContent = "";
+    const list = mi.filter((i) => i.kind === key);
+    if (!list.length) { box.appendChild(el("p", "empty", KINDS[key].empty)); return; }
+    list.forEach((it) => box.appendChild(entry(it, false)));
+  });
+}
+
+function renderNote() {
+  noteEl.textContent = "";
+  let box = null;
+  if (setupMissing) { box = el("div", "note err"); box.appendChild(el("p", null, "Setup needed: paste your Firebase settings into index.html and publish the rules (see SETUP.md).")); }
+  else if (loadError) { box = el("div", "note err"); box.appendChild(el("p", null, loadError)); }
+  else if (ready && canWrite) {
+    box = el("div", "note");
+    box.appendChild(el("p", null, "Anyone with this link can add lessons, files, videos and practical. You can delete only what you added."));
+    const ar = el("p", "ar", "أي حد معاه اللينك يقدر يضيف درس أو ملف أو فيديو من زرار + Add"); ar.lang = "ar"; ar.dir = "rtl"; box.appendChild(ar);
+  }
+  if (box) noteEl.appendChild(box);
+}
+function renderTabs() {
+  tabsEl.textContent = "";
+  DEPTS.forEach((d) => {
+    const b = el("button", "tab"); b.type = "button"; b.setAttribute("role", "tab"); b.setAttribute("aria-selected", d === state.dept ? "true" : "false");
+    b.style.setProperty("--tc", d.color);
+    b.appendChild(el("i")); b.appendChild(el("span", null, d.name));
+    b.addEventListener("click", () => { state.dept = d; state.lessonId = null; state.tab = "lessons"; try { location.hash = d.id; } catch (e) {} render(); window.scrollTo(0, 0); });
+    tabsEl.appendChild(b);
+  });
+}
+function render() {
+  setDeptVars(); renderTabs(); renderNote();
+  if (state.lessonId) buildLessonView(); else buildDeptView();
+  refreshData();
+  viewEl.classList.remove("view"); void viewEl.offsetWidth; viewEl.classList.add("view");
+}
+function fromHash() {
+  const h = (location.hash || "").replace("#", "");
+  const f = DEPTS.find((d) => d.id === h);
+  if (f) { state.dept = f; state.lessonId = null; state.tab = "lessons"; }
+}
+window.addEventListener("hashchange", () => { fromHash(); render(); });
+
+const snapDocs = (snap) => snap.docs.map((d) => Object.assign({}, d.data(), { id: d.id }));
+function onListenError(e) {
+  loadError = e && e.code === "permission-denied"
+    ? "The database refused the request. The owner needs to publish the Firestore rules (SETUP.md, step 4)."
+    : "Could not load the material. Check your connection and reload.";
+  renderNote();
+}
+
+async function start() {
+  fromHash();
+  render();
+  if (setupMissing) { ready = true; renderNote(); return; }
+  try {
+    const app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    const auth = getAuth(app);
+    const cred = await signInAnonymously(auth);
+    myId = cred.user.uid;
+    canWrite = true;
+  } catch (e) {
+    loadError = "Could not connect. If you are the owner, check SETUP.md steps 3 and 6 (anonymous sign-in and authorized domain).";
+    ready = true; render(); return;
+  }
+  ready = true;
+  render();
+  onSnapshot(collection(db, "lessons"), (s) => { lessons = snapDocs(s); refreshData(); }, onListenError);
+  onSnapshot(collection(db, "items"), (s) => { items = snapDocs(s); refreshData(); }, onListenError);
+}
+start();
+</script>
+</body>
+</html>
